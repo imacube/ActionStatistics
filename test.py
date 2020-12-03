@@ -72,7 +72,8 @@ class TestConcurrent(unittest.TestCase):
             p.join()
 
         history = action_stats._dict['history_abc']
-        assert history != [x for x in range(100)]
+        # todo provide a means to automatically rerun the test if this should happen
+        assert history != [x for x in range(100)]  # If this does happen by accident, then just re-run the tests
         for x in range(100):
             if x not in history:
                 print(f'\nMissing value: {x}')
