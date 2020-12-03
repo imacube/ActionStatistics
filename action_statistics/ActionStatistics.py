@@ -1,8 +1,11 @@
 """ActionStatistics stores the average time for each of the provided actions."""
+from multiprocessing import Manager
+
 
 class ActionStatistics:
     def __init__(self):
-        pass
+        manager = Manager()
+        self._dict = manager.dict()
 
     def addAction(self, action: str):
         """Add an action's time to the average for that action.
