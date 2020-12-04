@@ -1,6 +1,9 @@
-"""ActionStatistics stores the average time for each of the provided actions."""
+"""ActionStatistics stores the times for each of the provided actions and returns
+the average for each of the actions.
+"""
+
 import threading
-from json import loads, dumps  # minor performance improvement not calling a . sub-method
+from json import loads, dumps  # minor performance improvement by not calling a . sub-method
 from queue import SimpleQueue
 from statistics import mean
 from time import sleep
@@ -11,7 +14,7 @@ class ActionStatistics:
         self.queue_add_action = SimpleQueue()
         self.queue_get_stats = SimpleQueue()
         self.queue_get_stats_response = SimpleQueue()
-        self._dict = dict()  # Access directly at your own risk
+        self._dict = dict()  # Should only be accessed by the thread running self.worker
         threading.Thread(target=self.worker, daemon=True).start()
 
     def worker(self):
@@ -33,7 +36,8 @@ class ActionStatistics:
         Parameters
         ----------
         action : str
-            A JSON serialized string.
+            A JSON serialized string with a format like: {"action":"jump", "time":100}. The "action" field is
+            case sensitive.
         """
         self.queue_add_action.put(action)
 
@@ -44,6 +48,12 @@ class ActionStatistics:
         -------
         str
             JSON serialized string containing a list of the actions and their respective average times.
+
+        Raises
+        ------
+        queue.Empty
+            If this is unable to get a response for the query within the timeout, then a
+            queue.Empty exception will be raised.
         """
         self.queue_get_stats.put(True)
         return self.queue_get_stats_response.get(block=True, timeout=5)
