@@ -3,7 +3,6 @@ import threading
 import unittest
 from json import loads, dumps
 from random import randint
-from statistics import mean
 from time import sleep
 
 from action_statistics.ActionStatistics import ActionStatistics
@@ -49,12 +48,12 @@ class TestConcurrent(unittest.TestCase):
         action_stats = ActionStatistics()
         action_stats._add_action('''{"action":"jump", "time":100}''')
         action_stats._add_action('''{"action":"jump", "time":200}''')
-        assert action_stats._dict == {'jump': [100, 200]}
+        assert action_stats._dict == {'jump': {'total': 300, 'count': 2}}
 
     def test_get_stats(self):
         """Test the internal _get_stats method."""
         action_stats = ActionStatistics()
-        action_stats._dict = {'jump': [100]}
+        action_stats._dict = {'jump': {'total': 100, 'count': 1}}
         assert loads(action_stats._get_stats()) == [{"action": "jump", "avg": 100}]
 
     def test_addAction(self):
@@ -62,13 +61,13 @@ class TestConcurrent(unittest.TestCase):
         action_stats = ActionStatistics()
         action_stats.addAction('''{"action":"jump", "time":100}''')
         sleep(2)
-        assert action_stats._dict == {'jump': [100]}
+        assert action_stats._dict == {'jump': {'total': 100, 'count': 1}}
 
     def test_getStats(self):
         """Test getting an item."""
         action_stats = ActionStatistics()
-        action_stats._dict = {'jump': [100]}
-        assert loads(action_stats.getStats()) == [{"action": "jump", "avg": 100}]
+        action_stats._dict = {'jump': {'total': 100, 'count': 1}}
+        assert loads(action_stats.getStats()) == [{"action": "jump", "avg": 100.0}]
 
     def test_addAction_multiple(self):
         """Test that the average is being calculated correctly."""
@@ -76,7 +75,7 @@ class TestConcurrent(unittest.TestCase):
         action_stats.addAction('''{"action":"jump", "time":100}''')
         action_stats.addAction('''{"action":"jump", "time":200}''')
         sleep(2)
-        assert action_stats.getStats() == '''[{"action": "jump", "avg": 150}]'''
+        assert action_stats.getStats() == '''[{"action": "jump", "avg": 150.0}]'''
 
     def test_thread(self):
         """Test a thread accessing the shared dict."""
@@ -88,13 +87,13 @@ class TestConcurrent(unittest.TestCase):
                 {"action": "run", "time": 75},
                 {"action": "jump", "time": 200}
             ],
-            3
+            0
         ))
         thread.start()
         thread.join()
         sleep(2)
-        assert action_stats._dict == {'jump': [100, 200], 'run': [75]}
-        assert action_stats.getStats() == dumps([{"action": "jump", "avg": 150}, {"action": "run", "avg": 75}])
+        assert action_stats._dict == {'jump': {'total': 100 + 200, 'count': 2}, 'run': {'total': 75, 'count': 1}}
+        assert action_stats.getStats() == dumps([{"action": "jump", "avg": 150.0}, {"action": "run", "avg": 75.0}])
 
     def test_multiple_threads(self):
         """Test multiple threads accessing the method."""
@@ -112,7 +111,7 @@ class TestConcurrent(unittest.TestCase):
                 t.join()
 
             sleep(10)
-            assert mean(_action_stats._dict['jump']) == 49.5
+            assert _action_stats._dict['jump']['total'] / _action_stats._dict['jump']['count'] == 49.5
             return _action_stats
 
         # If the values are not in a random order, re-run the test

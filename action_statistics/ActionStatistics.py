@@ -59,15 +59,16 @@ class ActionStatistics:
         action = loads(action)
         action_time = action['time']
         action = action['action']
-        internal_action = self._dict.get(action, list())
-        internal_action.append(int(action_time))
+        internal_action = self._dict.get(action, {'total': 0, 'count': 0})
+        internal_action['total'] += action_time
+        internal_action['count'] += 1
         self._dict[action] = internal_action
 
     def _get_stats(self):
         """Return the stats."""
         return dumps(
             [
-                {'action': k, 'avg': mean(v)} for k, v in
+                {'action': k, 'avg': v['total']/v['count']} for k, v in
                 self._dict.items()
             ]
         )
