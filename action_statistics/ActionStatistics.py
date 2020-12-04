@@ -11,7 +11,7 @@ class ActionStatistics:
         self.queue_add_action = SimpleQueue()
         self.queue_get_stats = SimpleQueue()
         self.queue_get_stats_response = SimpleQueue()
-        self._dict = dict()
+        self._dict = dict()  # Access directly at your own risk
         threading.Thread(target=self.worker, daemon=True).start()
 
     def worker(self):

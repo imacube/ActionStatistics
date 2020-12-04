@@ -94,7 +94,7 @@ class TestConcurrent(unittest.TestCase):
         thread.join()
         sleep(2)
         assert action_stats._dict == {'jump': [100, 200], 'run': [75]}
-        assert action_stats.getStats() == dumps([{"action":"jump", "avg":150}, {"action":"run", "avg":75}])
+        assert action_stats.getStats() == dumps([{"action": "jump", "avg": 150}, {"action": "run", "avg": 75}])
 
     def test_multiple_threads(self):
         """Test multiple threads accessing the method."""
@@ -118,8 +118,7 @@ class TestConcurrent(unittest.TestCase):
         # If the values are not in a random order, re-run the test
         for _ in range(5):
             action_stats = trial_run()
-            if action_stats._dict['jump'] != [x for x in
-                                              range(100)]:
+            if action_stats._dict['jump'] != [x for x in range(100)]:
                 break
         assert action_stats._dict['jump'] != [x for x in range(100)]
 
