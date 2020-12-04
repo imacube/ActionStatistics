@@ -5,7 +5,7 @@ from json import loads, dumps
 from random import randint
 from time import sleep
 
-from action_statistics.ActionStatistics import ActionStatistics
+from action_statistics import ActionStatistics
 
 
 class TestInit(unittest.TestCase):
