@@ -5,7 +5,6 @@ the average for each of the actions.
 import threading
 from json import loads, dumps  # minor performance improvement by not calling a . sub-method
 from queue import SimpleQueue
-from statistics import mean
 from time import sleep
 
 
@@ -79,7 +78,7 @@ class ActionStatistics:
         """Return the stats."""
         return dumps(
             [
-                {'action': k, 'avg': v['total']/v['count']} for k, v in
+                {'action': k, 'avg': v['total'] / v['count']} for k, v in
                 self._dict.items()
             ]
         )
