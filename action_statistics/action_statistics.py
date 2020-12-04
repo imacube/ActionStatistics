@@ -47,7 +47,8 @@ class ActionStatistics:
         Returns
         -------
         str
-            JSON serialized string containing a list of the actions and their respective average times.
+            JSON serialized string containing a list of the actions and their respective average times with the format:
+            [{"action":"jump", "avg":150}, {"action":"run", "avg":75}]
 
         Raises
         ------

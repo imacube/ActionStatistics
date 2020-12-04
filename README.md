@@ -1,7 +1,19 @@
 # Action Statistics
 
-This library provides methods for storing actions and their respective times. It can then return the average time for
-all the stored actions. The methods permit concurrent access.
+This library provides methods for storing actions with their respective times and returning the average time for each
+action. The methods permit concurrent access.
+
+## Usage
+
+Sample usage of this library:
+
+```python
+from action_statistics import ActionStatistics
+
+action_stats = ActionStatistics()
+action_stats.addAction('''{"action":"jump", "time":100}''')  # Adds an action with time
+action_stats.getStats()  # Get actions and their mean time
+```
 
 ## Requirements
 
@@ -16,11 +28,17 @@ safeguard access to the storage object. However, as this is python threading per
 
 There is no input error checking for input values or exception handling, this is left to the user at this time.
 
-An initial attempt was made to use a `multiprocessing.Manager` proxy object which would bypass the Python's Global 
-Interpreter Lock (GIL), but preliminary sanity checks revealed a number of entries not getting stored. To see this 
-early stage code please see git commit `61b44847`.
+An initial attempt was made to use a `multiprocessing.Manager` proxy object which would bypass the Python's Global
+Interpreter Lock (GIL), but preliminary sanity checks revealed a number of entries not getting stored. To see this early
+stage code please see git commit `61b44847`.
 
-# Build
+# Install
+
+This assumes you have Python 3.7.5 and `pip` installed.
+
+```shell
+pip install <path or URL of this repo>
+```
 
 # Test
 
